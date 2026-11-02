@@ -143,7 +143,7 @@ $('#v-p').addEventListener('input',e=>{const t=e.target,n=t.dataset.p;if(!n)retu
   const p=D.pr[n]=D.pr[n]||{...PR0[n]},v=parseFloat(t.value.replace(',','.'));
   p[t.dataset.f]=isNaN(v)?null:v;p.d=date;prInfo();save()});
 function bwView(){
-  $('#v-g').innerHTML=`<div class='cap' style='margin-top:18px'>Körpergewicht nüchtern am ${dd(date)}</div><div class='set one'><input id='bw' inputmode='decimal' placeholder='kg' value='${D.bw[date]??''}' aria-label='Körpergewicht'><u>kg</u></div><div id='bws'></div><svg id='bwc' viewBox='0 0 300 120' width='100%' role='img' aria-label='Verlauf Körpergewicht'></svg><div class='cap'>Punkte: Tageswerte · Linie: 7-Tage-Durchschnitt (letzte 30 Tage)</div>`;
+  $('#v-g').innerHTML=`<div class='cap' style='margin-top:18px'>Körpergewicht nüchtern am ${dd(date)}</div><div class='set one'><input id='bw' inputmode='decimal' placeholder='kg' value='${D.bw[date]??''}' aria-label='Körpergewicht'><u>kg</u></div><div id='bws'></div><svg id='bwc' viewBox='0 0 300 120' width='100%' role='img' aria-label='Verlauf Körpergewicht'></svg><div class='cap'>Punkte: Tageswerte · Linie: gleitender 7-Tage-Durchschnitt (letzte 30 Tage)</div>`;
   bwInfo()}
 function bwInfo(){
   const ks=Object.keys(D.bw).sort(),el=$('#bws'),sv=$('#bwc');
@@ -153,8 +153,8 @@ function bwInfo(){
   const av=(a,b)=>{const v=pts.filter(p=>p[0]>=a&&p[0]<=b).map(p=>p[1]);return v.length?v.reduce((x,y)=>x+y)/v.length:null};
   const a=av(0,6),b=av(7,13),dl=b==null?'–':(a>=b?'+':'−')+f1(Math.abs(a-b));
   el.innerHTML=`<div class='rm'><div><b>${f1(D.bw[ks[ks.length-1]])}</b><span>zuletzt</span></div><div><b>${f1(a)}</b><span>Ø 7 Tage</span></div><div><b>${dl}</b><span>zur Vorwoche</span></div></div>`;
-  const ra=pts.map(p=>[p[0],av(p[0],p[0]+6)]),vs=pts.map(p=>p[1]).concat(ra.map(p=>p[1])),hi=Math.max(...vs)+.2,lo=Math.min(...vs)-.2;
-  const X=g=>8+(29-g)/29*284,Y=v=>12+(hi-v)/(hi-lo)*92;
+  const ra=pts.map(p=>[p[0],av(p[0]-3,p[0]+3)]),vs=pts.map(p=>p[1]).concat(ra.map(p=>p[1])),hi=Math.max(...vs)+.2,lo=Math.min(...vs)-.2;
+  const M=Math.max(6,...pts.map(p=>p[0])),X=g=>8+(M-g)/M*284,Y=v=>12+(hi-v)/(hi-lo)*92;
   sv.innerHTML=`<polyline class='l1' points='${ra.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')}'/>`+pts.map(p=>`<circle class='d' cx='${X(p[0]).toFixed(1)}' cy='${Y(p[1]).toFixed(1)}' r='2.5'/>`).join('')+`<text class='tx' x='8' y='10'>${f1(hi)}</text><text class='tx' x='8' y='118'>${f1(lo)}</text>`}
 $('#v-g').addEventListener('input',e=>{if(e.target.id!='bw')return;
   const v=parseFloat(e.target.value.replace(',','.'));

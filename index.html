@@ -93,13 +93,13 @@ button.n{display:block;width:100%;text-align:left;background:none;border:0;paddi
 <div id="rt"></div>
 </main>
 <script>
-const F=n=>[n,2,0,0];
+const F=n=>[n,2,0,0],G=n=>[n,1,0,8];
 const P={
-push:{n:'Push',c:'var(--red)',o:'var(--ton)',e:[['Bankdrücken',3,3,5,'Start 60 kg, 1–2 Wdh. Reserve'],F('Seitheben'),F('Schrägbank Kurzhantel'),F('Schulterdrücken'),F('Dips mit Zusatzgewicht'),F('Trizepsdrücken')]},
-legs:{n:'Legs',c:'var(--yel)',o:'#12171c',e:[['Squat',3,3,5,'Start 72,5 kg, 1–2 Wdh. Reserve'],F('Beinbeuger'),F('Beinstrecker'),F('Adduktoren'),F('Waden'),F('Leg Raises'),F('Decline Crunches')]},
-upper:{n:'Upper',c:'var(--grn)',o:'var(--ton)',e:[['Bankdrücken',3,6,8,'Start 55 kg'],F('Latzug'),F('Seitheben'),F('Schrägbank Kurzhantel'),F('T-Bar-Rudern'),F('Trizepsdrücken'),F('Incline Curls'),F('Hammer Curls')]},
-lower:{n:'Lower',c:'var(--lo)',o:'var(--lo-on)',e:[['Squat',3,6,8,'Start 67,5 kg'],['SLDL',3,6,8,'Start ca. 70 kg'],F('Beinbeuger'),F('Beinstrecker'),F('Adduktoren'),F('Waden'),F('Decline Crunches')]},
-pull:{n:'Pull',c:'var(--blue)',o:'var(--ton)',e:[['Sumo Deadlift',3,3,5,'Start 105 kg, 1–2 Wdh. Reserve'],F('Latzug'),F('Enges Rudern'),F('T-Bar-Rudern'),F('Incline Curls'),F('Hammer Curls'),F('Wrist Curls')]}
+push:{n:'Push',c:'var(--red)',o:'var(--ton)',e:[['Bankdrücken',3,3,5,'Start 60 kg, 1–2 Wdh. Reserve'],F('Seitheben'),F('Schrägbank Kurzhantel'),G('Butterfly'),F('Schulterdrücken'),F('Dips mit Zusatzgewicht'),F('Trizeps Extension')]},
+legs:{n:'Legs',c:'var(--yel)',o:'#12171c',e:[['Squat',3,3,5,'Start 72,5 kg, 1–2 Wdh. Reserve'],F('Forearm Curls'),F('Beinbeuger'),F('Beinstrecker'),F('Adduktoren'),F('Waden'),F('Leg Raises'),G('Crunch Maschine')]},
+upper:{n:'Upper',c:'var(--grn)',o:'var(--ton)',e:[['Bankdrücken',3,6,8,'Start 55 kg'],F('Latzug'),G('Latzug eng'),F('Seitheben'),F('Schrägbank Kurzhantel'),F('Trizeps Extension'),G('Dips'),F('T-Bar-Rudern'),F('Preacher Curl'),F('Hammer Curl')]},
+lower:{n:'Lower',c:'var(--lo)',o:'var(--lo-on)',e:[['Squat',3,6,8,'Start 67,5 kg'],['SLDL',3,6,8,'Start ca. 70 kg'],F('Beinbeuger'),F('Beinstrecker'),F('Adduktoren'),F('Waden'),F('Leg Raises'),G('Crunch Maschine')]},
+pull:{n:'Pull',c:'var(--blue)',o:'var(--ton)',e:[['Sumo Deadlift',3,3,5,'Start 105 kg, 1–2 Wdh. Reserve'],F('Latzug'),F('Enges Rudern'),F('T-Bar-Rudern'),F('Preacher Curl'),G('Incline Curl'),F('Hammer Curl')]}
 };
 const PL={5:'push',6:'pull',0:'legs',2:'upper',3:'lower'};
 const BASE={'Bankdrücken':74.5,'Squat':90,'Sumo Deadlift':130};
@@ -222,9 +222,9 @@ function render(){
   $('#rm').innerHTML=[['Bankdrücken','Bank'],['Squat','Squat'],['Sumo Deadlift','Sumo']].map(([n,l])=>`<div><b>${fmt(r[n])}</b><span>${l}</span></div>`).join('');
   $('#ex').innerHTML=p.e.map(([n,s0,lo,hi,note0],i)=>{const T=inPR(date),M=cur=='lower'?n=='Squat':(lo>0&&lo<6&&cur!='legs'),sets=T?(M?4:1):s0,note=T?(M?'PR-Test: steigernd aufwärmen, bis zu 4 Versuche':'PR-Woche: 1 Satz, nicht bis Versagen'):note0;
     const L=last(cur,n),rows=cs[n]||[],cnt=Math.max(sets,rows.length);
-    let h=`<section class="ex" style="--c:${p.c}"><button class="n" data-x="${i}">${n} <small>${op[cur+':'+i]?'▾':'▸'}</small></button><div class="pl">${T?note:(lo?sets+'×'+lo+'–'+hi:'2× Versagen · Ziel 10 / 8 Wdh.')+(note?' · '+note:'')}</div>`;
+    let h=`<section class="ex" style="--c:${p.c}"><button class="n" data-x="${i}">${n} <small>${op[cur+':'+i]?'▾':'▸'}</small></button><div class="pl">${T?note:(lo?sets+'×'+lo+'–'+hi:(s0==1?'1× Versagen · Ziel '+hi+' Wdh.':'2× Versagen · Ziel 10 / 8 Wdh.'))+(note?' · '+note:'')}</div>`;
     if(L){h+=`<div class="lt">Zuletzt ${dd(L[0])}: ${L[1].map(([w,x])=>fmt(w)+'×'+x).join(' · ')}</div>`;
-      if(!T&&(lo?L[1].length>=s0&&L[1].every(([w,x])=>x>=hi):L[1].length>=2&&L[1][0][1]>=10&&L[1][1][1]>=8))h+='<div class="hint">Ziel erreicht: heute mehr Gewicht nehmen.</div>'}
+      if(!T&&(lo?L[1].length>=s0&&L[1].every(([w,x])=>x>=hi):s0==1?L[1][0][1]>=hi:L[1].length>=2&&L[1][0][1]>=10&&L[1][1][1]>=8))h+='<div class="hint">Ziel erreicht: heute mehr Gewicht nehmen.</div>'}
     if(op[cur+':'+i])h+=px(n,i,L,lo,rows);for(let j=0;j<cnt;j++){const[w,x]=rows[j]||[],lw=(L&&L[1][j])||[];
       h+=`<div class="set"><i>${j+1}</i><input inputmode="decimal" data-n="${i}" data-j="${j}" data-f="0" placeholder="${lw[0]??'kg'}" value="${w??''}"><u>×</u><input inputmode="numeric" data-n="${i}" data-j="${j}" data-f="1" placeholder="${lw[1]??'Wdh.'}" value="${x??''}"></div>`}
     return h+`<button class="add" data-a="${i}">+ Satz</button>${L?` <button class="add" data-l="${i}">Wie letztes Mal</button>`:''}</section>`}).join('');
